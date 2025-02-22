@@ -1,55 +1,67 @@
 import { db } from "@/db/db";
-import { ParentCreateProps, TypedRequestBody } from "@/types/types";
+import { StudentCreateProps, TypedRequestBody } from "@/types/types";
 import { convertDateToIso } from "@/utils/convertDateToIso";
 import { Request, Response } from "express";
 
-export async function createParent(req: TypedRequestBody<ParentCreateProps>, res: Response) {
+export async function createStudent(req: TypedRequestBody<StudentCreateProps>, res: Response) {
   const data = req.body;
-  const {NIN,phone,email,dob} = data;
+  const {BCN, regNo,email,rollNo,dob,admissionDate} = data;
   data.dob = convertDateToIso(dob);
+  data.admissionDate = convertDateToIso(admissionDate);
   try {
     // Check if the school already exists\
-    const existingEmail = await db.parent.findUnique({
+    const existingEmail = await db.student.findUnique({
       where: {
         email,
       },
     });
-    const existingNIN = await db.parent.findUnique({
+    const existingBCN = await db.student.findUnique({
       where: {
-        NIN,
+        BCN,
       },
     });
-    const existingPhone = await db.parent.findUnique({
+    const existingRegNo = await db.student.findUnique({
       where: {
-        phone,
+        regNo,
       },
     });
-    if (existingNIN) {
+    const existingRollNo = await db.student.findUnique({
+      where: {
+        rollNo,
+      },
+    });
+    if (existingBCN) {
       return res.status(409).json({
         data: null,
-        error: "Parent already exists with NIN",
+        error: "Student already exists with BCN",
       });
     }
     if (existingEmail) {
       return res.status(409).json({
         data: null,
-        error: "Parent already exists with email",
+        error: "Student already exists with email",
       });
     }
-    if (existingPhone) {
+    if (existingRegNo) {
       return res.status(409).json({
         data: null,
-        error: "Parent already exists with phone",
+        error: "Student already exists with RegNo",
       });
     }
-    const newParent = await db.parent.create({
+    if (existingRollNo) {
+      return res.status(409).json({
+        data: null,
+        error: "Student already exists with RollNo",
+      });
+    }
+    const newStudent = await db.student.create({
       data,
     });
     console.log(
-      `Parent created successfully: ${newParent.firstName} (${newParent.id})`
+      `Student created successfully: ${newStudent.firstName} (${newStudent.id})`
     );
     return res.status(201).json({
-      data: newParent,
+      data: newStudent,
       error: null,
     });
   } catch (error) {
@@ -60,14 +72,14 @@ export async function createParent(req: TypedRequestBody<ParentCreateProps>, res
     });
   }
 }
-export async function getParents(req: Request, res: Response) {
+export async function getStudents(req: Request, res: Response) {
   try {
-    const parents = await db.parent.findMany({
+    const students = await db.student.findMany({
       orderBy: {
         createdAt: "desc",
       },
     });
-    return res.status(200).json(parents);
+    return res.status(200).json(students);
   } catch (error) {
     console.log(error);
   }

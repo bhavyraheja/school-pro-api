@@ -43,39 +43,41 @@ model Contact {
 }
 
 model Class {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   title     String
-  slug      String   @unique
+  slug      String    @unique
   streams   Stream[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  students  Student[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   @@map("classes")
 }
 
 model Stream {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   title     String
-  slug      String   @unique
+  slug      String    @unique
   classId   String
-  class     Class    @relation(fields: [classId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  class     Class     @relation(fields: [classId], references: [id])
+  students  Student[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   @@map("streams")
 }
 
 model Parent {
-  id            String @id @default(cuid())
+  id            String    @id @default(cuid())
   title         String
   firstName     String
   lastName      String
   relationship  String
-  email         String @unique
-  NIN           String @unique
+  email         String    @unique
+  NIN           String    @unique
   gender        String
   dob           DateTime
-  phone         String @unique
+  phone         String    @unique
   nationality   String
   whatsapNo     String?
   imageUrl      String?
@@ -83,8 +85,45 @@ model Parent {
   occupation    String
   address       String
   password      String
+  students      Student[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("parents")
+}
+
+model Student {
+  id            String   @id @default(cuid())
+  name          String
+  firstName     String
+  lastName      String
+  email         String   @unique
+  parentId      String
+  classId       String
+  streamId      String
+  password      String
+  imageUrl      String?
+  phone         String?
+  parentName    String?
+  classTitle    String?
+  streamTitle   String?
+  state         String
+  BCN           String   @unique
+  nationality   String
+  religion      String
+  gender        String
+  dob           DateTime
+  rollNo        String   @unique
+  regNo         String   @unique
+  admissionDate DateTime
+  address       String
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  @@map("parents")
+  // Relations
+  parent Parent @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  class  Class  @relation(fields: [classId], references: [id])
+  stream Stream @relation(fields: [streamId], references: [id])
+
+  @@map("students")
 }

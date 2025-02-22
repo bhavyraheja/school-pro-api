@@ -45,3 +45,29 @@ export type ParentCreateProps = {
     address: string;
     password: string;
   }
+
+  export type StudentCreateProps = {
+    name: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    parentId: string;
+    classId: string;
+    streamId: string;
+    parentName?: string;
+    classTitle?: string;
+    streamTitle?: string;
+    password: string;
+    imageUrl: string;
+    phone: string;
+    state: string;
+    BCN: string;
+    nationality: string;
+    religion: string;
+    gender: string;
+    dob: string;
+    rollNo: string;
+    regNo: string;
+    admissionDate: string;
+    address: string; 
+  }

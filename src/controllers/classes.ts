@@ -82,8 +82,21 @@ export async function getClasses(req: Request, res: Response) {
         createdAt: "desc",
       },
       include:{
-        streams:true
-      }
+        streams: {
+          include: {
+            _count: {
+              select: {
+                students: true
+              }
+            }
+          },
+        },
+        _count:{
+          select: {
+            students: true
+          }
+        }
+      },
     });
     return res.status(200).json(classes);
   } catch (error) {
